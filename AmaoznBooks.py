@@ -8,7 +8,7 @@ import os
 
 baseUrl = 'https://www.amazon.com/'
 url = 'https://www.amazon.com/s?bbn=283155&rh=n%3A283155%2Cp_n_publication_date%3A1250226011&dc&fst=as%3Aoff&qid=1603803269&rnid=1250225011&ref=lp_283155_nr_p_n_publication_date_0'
-pagenum = 5
+pagenum = 75
 
 
 class BookScraper():
@@ -29,38 +29,82 @@ class BookScraper():
             bookDoms = soup.find_all(
                 'div', attrs={'class': 'a-section a-spacing-medium'})
 
-        # Find each product url
+            books = []
+            # getting data of each book
+            for bookDom in bookDoms:
+                if bookDom != None:
 
-        # for url in product_url:
-        #     driver.get(url)
-        #     Get all product information
-        #     Store in dictionary, write dictionary values to csv
+                    titleDom = bookDom.find(
+                        'span', attrs={'class': 'a-size-medium a-color-base a-text-normal'})
+                    if titleDom != None:
+                        title = titleDom.text
+                    else:
+                        title = "Empty"
 
-#         title = driver.find_elements_by_xpath(
-#             '//span[@class="a-size-medium a-color-base a-text-normal"]')
+                    star_ratingDom = bookDom.find(
+                        'div', attrs={'class': 'a-section a-spacing-none a-spacing-top-micro'})
+                    if star_ratingDom != None:
+                        starDom = star_ratingDom.find(
+                            'span', attrs={'class': 'a-icon-alt'})
+                        if starDom != None:
+                            star = starDom.text
+                        else:
+                            star = "Empty"
+                        ratingDom = star_ratingDom.find(
+                            'span', attrs={'class': 'a-size-base'})
+                        if ratingDom != None:
+                            rating = ratingDom.text
+                        else:
+                            rating = "Empty"
 
-#         author = driver.find_elements_by_xpath(
-#             '//div[@class="a-section a-spacing-none"]/div[@class="a-row a-size-base a-color-secondary"]/span[2]')[0].text
-#         price = driver.find_elements_by_xpath('//span[@class="a-price-whole"]')
-#         #ratingcount = driver.find_elements_by_xpath('//div[@class="a-row a-size-small"]/span[2]/a/span')
+                    priceDom = bookDom.find(
+                        'span', attrs={'class': 'a-offscreen'})
+                    if priceDom != None:
+                        price = priceDom.text
+                    else:
+                        price = "Empty"
 
-#         numstar = driver.find_elements_by_xpath(
-#             '//div[@class="a-row a-size-small"]/span[2]')
-#         #ratingcount = driver.find_elements_by_xpath('.//span[@class = "a-size-base"]')
-#         ratingcount = driver.find_elements_by_xpath(
-#             '//div[@class="a-row a-size-small"]/span[2]/a/span')
-# #         for elem in driver.find_elements_by_xpath('.//span[@class = "a-size-base"]')[2].text:
-# #                 ratingcount = elem.text
-#         bestseller = driver.find_elements_by_xpath(
-#             '//span[@class="a-badge-text"]')
-#         genre = driver.find_elements_by_xpath(
-#             '//span[@class="a-badge-supplementary-text a-text-ellipsis"]')
-#         publisher = driver.find_elements_by_xpath(
-#             '//span[@class="a-badge-supplementary-text a-text-ellipsis"]')
-#         num_page_items = len(title)
-#         for element in range(num_page_items):
-#             f.write(title[element].text.replace(',', '') + "," + author + "," + price[element].text +
-#                     "," + ratingcount[element].text + "," + numstar[element].text.replace(',', '') + "\n")
+                    badgeDom = bookDom.find(
+                        'span', attrs={'class': 'a-badge-text'})
+                    if badgeDom != None:
+                        badge = badgeDom.text
+                    else:
+                        badge = "Empty"
+                    genreDom = bookDom.find(
+                        'span', attrs={'class': 'a-badge-supplementary-text a-text-ellipsis'})
+                    if genreDom != None:
+                        genre = genreDom.text
+                    else:
+                        genre = "Empty"
 
 
-driver.close()
+#                     # for get url
+#                     elem = bookDom.find('a', attrs={'class': 'a-size-base a-link-normal a-text-bold'})
+#                     alink = elem.attrs['href']
+
+#                     bookurl = baseUrl+alink
+#                     print(bookurl)
+
+
+#                     driver.get(bookurl)
+
+
+#                     publish = driver.find_elements_by_xpath('//div[@class="a-unordered-list a-nostyle a-vertical a-spacing-none detail-bullet-list"]/span/span')
+#                     publisher = publish.text
+
+#                     genre = driver.find_elements_by_xpath('//ul[@class="a-unordered-list a-nostyle a-vertical zg_hrsr"]/span')
+#                     genreB = genre.text
+
+                    new = {'Title': title, 'Price': price, 'Star': star, 'Rating': rating,
+                           'Genre': genre, 'Badge': badge}
+
+                    books.append(new)
+# writing in csv file
+            df = pd.DataFrame(books, columns=columns)
+            df.to_csv('testbook1.csv', mode='a', header=False,
+                      index=False, encoding='utf-8')
+
+
+if __name__ == '__main__':
+    scraper = BookScraper()
+    scraper.scrape()
