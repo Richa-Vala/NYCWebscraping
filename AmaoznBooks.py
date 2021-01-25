@@ -1,3 +1,4 @@
+# Load packages
 import json
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -7,7 +8,10 @@ import time
 import os
 
 baseUrl = 'https://www.amazon.com/'
+# url to scrape the fields from
 url = 'https://www.amazon.com/s?bbn=283155&rh=n%3A283155%2Cp_n_publication_date%3A1250226011&dc&fst=as%3Aoff&qid=1603803269&rnid=1250225011&ref=lp_283155_nr_p_n_publication_date_0'
+
+# Number of pages to scrape
 pagenum = 75
 
 
@@ -76,24 +80,6 @@ class BookScraper():
                         genre = genreDom.text
                     else:
                         genre = "Empty"
-
-
-#                     # for get url
-#                     elem = bookDom.find('a', attrs={'class': 'a-size-base a-link-normal a-text-bold'})
-#                     alink = elem.attrs['href']
-
-#                     bookurl = baseUrl+alink
-#                     print(bookurl)
-
-
-#                     driver.get(bookurl)
-
-
-#                     publish = driver.find_elements_by_xpath('//div[@class="a-unordered-list a-nostyle a-vertical a-spacing-none detail-bullet-list"]/span/span')
-#                     publisher = publish.text
-
-#                     genre = driver.find_elements_by_xpath('//ul[@class="a-unordered-list a-nostyle a-vertical zg_hrsr"]/span')
-#                     genreB = genre.text
 
                     new = {'Title': title, 'Price': price, 'Star': star, 'Rating': rating,
                            'Genre': genre, 'Badge': badge}
